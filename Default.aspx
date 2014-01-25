@@ -1,24 +1,7 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" Trace ="true" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" Trace ="true" MasterPageFile="~/MasterPage.master" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-    <link href="FormsStyles.css" rel="stylesheet" />
-</head>
-<body>
-    <form id="form1" runat="server">
-    <asp:Panel ID ="pnlUser" runat ="server">
-    </asp:Panel>
-        <asp:SqlDataSource ID="sdsUser" runat="server" CancelSelectOnNullParameter="False" ConnectionString="<%$ ConnectionStrings:ForumDatabaseConnectionString %>" SelectCommand="select dbo.fnGetUser(@username, @password)">
-            <SelectParameters>
-                <asp:ControlParameter ControlID="hiddenUserName" Name="username" PropertyName="Value" />
-                <asp:ControlParameter ControlID="hiddenPassword" Name="password" PropertyName="Value" />
-            </SelectParameters>
-        </asp:SqlDataSource>
-        <asp:HiddenField ID="hiddenUserName" runat="server" />
-        <asp:HiddenField ID="hiddenPassword" runat="server" />
+    <asp:Content ContentPlaceHolderID="ContentPlaceHolder1" runat ="server"> 
+    
     <div id ="Topics">
         
         <asp:Panel ID="pnlPosts" runat="server">
@@ -26,6 +9,5 @@
             <br />
         </asp:Panel>
     </div>
-    </form>
-</body>
-</html>
+    
+    </asp:Content>

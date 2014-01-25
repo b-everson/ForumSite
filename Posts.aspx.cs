@@ -11,7 +11,6 @@ public partial class Topics : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         loadPosts();
-        HyperLink link = new HyperLink();
     }
     /* 
      * use query string to get relevant posts
