@@ -13,7 +13,8 @@ public partial class CreateAccount : System.Web.UI.Page
 
         UnobtrusiveValidationMode = System.Web.UI.UnobtrusiveValidationMode.None;
 
-        ListItem[] states = { new ListItem("ALABAMA", "AL"), 
+        ListItem[] states = { new ListItem("", ""),
+                              new ListItem("ALABAMA", "AL"), 
                               new ListItem("ALASKA", "AK"),
                               new ListItem("AMERICAN SAMOA", "AS"),
                               new ListItem("ARIZONA", "AZ"),
@@ -78,12 +79,70 @@ public partial class CreateAccount : System.Web.UI.Page
         {
             ddlState.Items.Add(states[i]);
         }
+        ddlState.SelectedIndex = -1;        
+
+        btnCreate.Click += btnCreate_Click;
+    }
+
+    void btnCreate_Click(object sender, EventArgs e)
+    {
+        if (ValidInfo())
+        {
+            /*create new ForumUser with textfield values
+              save clientID into session state
+              redirect to ~/default.aspx
+             */
+            try
+            {
+                ForumUser user = ForumUserDB.CreateUser(txtUserName.Text, txtPassword.Text, txtFirstName.Text, txtLastName.Text, txtEmail.Text, txtPhone.Text, txtStreet1.Text, txtStreet2.Text, txtCity.Text, ddlState.SelectedValue, txtZip.Text);
+                lblMessage.Text = "";
+                Session["UserID"] = user.UserID;
+                Response.Redirect("~/Default.aspx");
+            }
+            catch (Exception ex)
+            {
+                lblMessage.Text = ex.Message;
+                lblMessage.ForeColor = Color.Red;
+            }
+        }
+        else
+        {
+            lblMessage.Text = "Invalid/Missing fields";
+            lblMessage.ForeColor = Color.Red;
+        }
+    }
+
+    /// <summary>
+    /// Returns false if required fields are missing or username is already taken.
+    /// </summary>
+    /// <returns></returns>
+    private bool ValidInfo()
+    {
+        bool valid = true;
 
         //if user name is taken, inform user
-        if(ForumUser.UserExists(txtUserName.Text)){
+        if (ForumUserDB.UserExists(txtUserName.Text))
+        {
             lblMessage.ForeColor = Color.Red;
             lblMessage.Text = "There is already a user by that name.";
+            valid = false;
         }
 
+        if (txtPassword.Text != txtConfirmPassword.Text)
+        {
+            valid = false;
+        }
+        
+
+
+        if (txtFirstName.Text == "" || txtLastName.Text == "" || txtEmail.Text == "")
+        {
+            valid = false;
+        }
+
+
+        return valid;
     }
+
+
 }
