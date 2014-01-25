@@ -5,14 +5,17 @@ using System.Web;
 using System.Data.SqlClient;
 
 /// <summary>
-/// Summary description for ForumDB
+/// Class to handle functions for basic interaction with forum database.
 /// </summary>
 public class ForumDB
 {
 	public ForumDB()
 	{
 	}
-
+    /// <summary>
+    /// Get the SqlConnection object to interact with forum database.
+    /// </summary>
+    /// <returns></returns>
     public static SqlConnection GetConnection()
     {
 
