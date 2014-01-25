@@ -1,11 +1,4 @@
-﻿body {
-}
-
-#accountForm *{
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-
+﻿
 
 .label {
      clear: left;
@@ -90,4 +83,9 @@
     margin-right: 5%;
     display: block;
     font-size: 80%;
+}
+
+#btnCreate {
+    clear: left;
+    float: left;
 }

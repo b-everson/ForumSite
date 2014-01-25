@@ -12,6 +12,7 @@ public partial class Topics : System.Web.UI.Page
     {
         loadPosts();
     }
+
     /* 
      * use query string to get relevant posts
      * save posts in list
@@ -20,6 +21,9 @@ public partial class Topics : System.Web.UI.Page
      *     display first 150 characters of content for each post
      *     display date created
      */ 
+    /// <summary>
+    /// Populate the posts panel.
+    /// </summary>
     private void loadPosts()
     {
         int topicID = Convert.ToInt32(Request.QueryString["id"]);
@@ -40,7 +44,7 @@ public partial class Topics : System.Web.UI.Page
             int userID = Convert.ToInt32(reader["UserID"]);
             HyperLink hlTitle = new HyperLink();
             hlTitle.Text = title;
-            hlTitle.NavigateUrl = "http://www.reddit.com";
+            hlTitle.NavigateUrl = "~/nofile";
 
             pnlNext.Controls.Add(hlTitle);
             Label lblDate = new Label();

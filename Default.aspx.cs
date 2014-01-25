@@ -15,17 +15,17 @@ public partial class _Default : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
-        loadPostsPanel();
+        loadTopicsPanel();
     }
-
-    private void loadPostsPanel()
+    /// <summary>
+    /// Populate the selection of topics
+    /// </summary>
+    private void loadTopicsPanel()
     {
         DataView view = (DataView)SqlDataSource1.Select(DataSourceSelectArguments.Empty);
 
         for (int i = 0; i < view.Count; i++)
         {
-
             DataRowView row = (DataRowView)view[i];
             Panel pnlNext = new Panel();
             pnlPosts.Controls.Add(pnlNext);
@@ -37,7 +37,6 @@ public partial class _Default : System.Web.UI.Page
             lblContent.Text = row["Content"].ToString();
             pnlNext.Controls.Add(lblContent);
             pnlNext.CssClass = "pnlNext";
-
         } 
     }
 }

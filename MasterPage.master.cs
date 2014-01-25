@@ -94,7 +94,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
             if (Trace.IsEnabled)
                 Trace.Write("Begin database read");
 
-            user = ForumUser.GetUser(Convert.ToInt32(HttpContext.Current.Session["UserID"]));
+            user = ForumUserDB.GetUser(Convert.ToInt32(HttpContext.Current.Session["UserID"]));
 
             if (Trace.IsEnabled)
                 Trace.Warn("End database read");
