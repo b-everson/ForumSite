@@ -1,0 +1,13 @@
+First thoughts
+
+Users
+
+Topics -- Title, Content, Time posted 
+
+Posts -- Title, content, Time posted, User
+
+
+Messages, can be a response to a post, can be a private message -- content,
+
+
+Private message has sender and recipient. Both are users.
