@@ -75,7 +75,7 @@
 
 #lblDate {
     float: right;
-    clear: right;
+    /*clear: right;*/
 }
 
 .lblContent {
@@ -89,3 +89,38 @@
     clear: left;
     float: left;
 }
+
+#tblPosts {
+    margin-top: 5px;
+    margin-left: 10px;
+    width: 600px;
+}
+
+#btnPost {
+    margin-left: 10px;
+}
+
+#tblPosts tr{
+    border: 1px solid black;
+}
+
+.nameCell, .dateCell {
+    width: 15%;
+}
+
+.descCell {
+    width: 50%;
+}
+
+.titleCell {
+    width: 20%;
+}
+
+.oddRow {
+    background-color: #F0F0F0;
+}
+
+.evenRow {
+    background-color: lightblue;
+}
+

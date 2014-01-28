@@ -1,0 +1,15 @@
+Features needing to be implemented - 
+
+    -Admin creating or deleting? (maybe archive?) topics
+    -Admin deleting posts    
+
+    -Users creating posts
+    -Users private message other users
+    -Users check reply messages 
+    -Users check posts
+    -User name should be displayed with posts
+
+
+Get database logic out of pages
+
+    
