@@ -165,7 +165,7 @@ public static class ForumUserDB
         int userID = -1;
         if (reader.Read())
         {
-            userID = Convert.ToInt32(reader[0]);
+            userID = Convert.ToInt32(reader[0]);//query returns result of SCOPE_IDENTITY()
         }
         connection.Close();
         
@@ -185,6 +185,48 @@ public static class ForumUserDB
         {
             permissionsID = Convert.ToInt32(reader[0]);
         }
+        connection.Close();
         return permissionsID;
+    }
+
+    public static ForumUser GetUserByEmail(string email)
+    {
+        ForumUser myUser = null;
+
+        String commandString = String.Format("Select [UserID],[UserName], [Password], [FirstName], [LastName], [email], [Phone], [Street1], [Street2], [City], [State], [Zip], [Permissions] From dbo.[User] Where [UserName] Like '{0}'", email);
+        SqlCommand command = new SqlCommand(commandString, new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ForumDatabaseConnectionString"].ConnectionString));
+
+        command.CommandType = CommandType.Text;
+        command.Connection.Open();
+        SqlDataReader reader = command.ExecuteReader();
+        reader.Read();
+        IDataRecord dr = (IDataRecord)reader;
+        try
+        {
+            {
+                Object[] dataValues = new Object[dr.FieldCount];
+                for (int i = 0; i < dr.FieldCount; i++)
+                {
+                    dataValues[i] = dr[i];
+                }
+                myUser = new ForumUser(Convert.ToInt32(dataValues[0]), dataValues[1].ToString(), dataValues[2].ToString(), dataValues[3].ToString(), dataValues[4].ToString(), dataValues[5].ToString(), dataValues[6].ToString(), dataValues[7].ToString(), dataValues[8].ToString(), dataValues[9].ToString(), dataValues[10].ToString(), dataValues[11].ToString(), Convert.ToInt32(dataValues[12]));
+            }
+        }
+
+        catch (InvalidOperationException)
+        {
+            //nothing to do
+        }
+
+        reader.Close();
+        command.Connection.Close();
+
+
+        return myUser;
+    }
+
+    public static bool UserEmailTaken(string email)
+    {
+        return GetUserByEmail(email) != null;
     }
 }
