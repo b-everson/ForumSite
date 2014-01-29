@@ -121,7 +121,7 @@ public partial class CreateAccount : System.Web.UI.Page
         bool valid = true;
 
         //if user name is taken, inform user
-        if (ForumUser.ValidUserName(txtUserName.Text))
+        if (!ForumUser.ValidUserName(txtUserName.Text))
         {
             lblMessage.ForeColor = Color.Red;
             lblMessage.Text = "There is already a user by that name.";
