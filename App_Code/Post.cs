@@ -6,7 +6,7 @@ using System.Web;
 /// <summary>
 /// Summary description for Post
 /// </summary>
-public class Post
+public class Post : IComparable<Post>
 {
 
     public Post(int postID, string title, string content, DateTime timePosted, int userID, int topicID)
@@ -25,4 +25,59 @@ public class Post
     public DateTime TimePosted { get; private set; }
     public int UserID { get; private set; }
     public int TopicID { get; private set; }
+
+
+    public int CompareTo(Post other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+        else
+        {
+            return TimePosted.CompareTo(other.TimePosted);
+        }
+
+    }
+    /*
+    public int ComparePostsByUser(Post other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+        else
+        {
+            return ForumUserDB.GetUser(UserID).UserName.CompareTo(ForumUserDB.GetUser(other.UserID));
+        }
+    }*/
+    
+    public static int ComparePostsByUser(Post x, Post y)
+    {
+
+        if (x == null)
+        {
+            if (y == null)
+            {
+                return 0;
+            }
+            else
+            {
+                //if x is null and y is not, y is greater
+                return -1;
+            }
+        }
+        else
+        {
+            if (y == null)
+            {
+                //if y null and x is not, x is greater
+                return 1;
+            }
+            else
+            {
+                return ForumUserDB.GetUser(x.UserID).UserName.CompareTo(ForumUserDB.GetUser(y.UserID).UserName);
+            }
+        }
+    }
 }
