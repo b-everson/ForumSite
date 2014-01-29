@@ -8,9 +8,13 @@ using System.Data.SqlClient;
 
 public partial class Topics : System.Web.UI.Page
 {
+    PostList posts;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         loadPosts();
+        Session.Remove("timeSort");
+        Session.Remove("userNameSort");
     }
 
     /* 
@@ -26,23 +30,33 @@ public partial class Topics : System.Web.UI.Page
     /// </summary>
     private void loadPosts()
     {
+
         int topicID = Convert.ToInt32(Request.QueryString["id"]);
-        SqlConnection connection = ForumDB.GetConnection();
-        SqlCommand postsCommand = new SqlCommand("SELECT p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID", connection);
-        postsCommand.Parameters.AddWithValue("@topicID", topicID);
-
-        connection.Open();
-        SqlDataReader reader = postsCommand.ExecuteReader();
-        int counter = 0;
-        while (reader.Read())
+        string userNameSort = "";
+        if (HttpContext.Current.Session["userNameSort"] != null)
         {
-            
-            int postID = Convert.ToInt32(reader["PostID"]);
-            string title = reader["Title"].ToString();
-            string content = reader["Content"].ToString();
-            DateTime timePosted = DateTime.Parse(reader["TimePosted"].ToString());
-            int userID = Convert.ToInt32(reader["UserID"]);
+            userNameSort = HttpContext.Current.Session["userNameSort"].ToString();
+        }
 
+        DateTime timeSort = DateTime.Now.AddDays(2);
+        if (HttpContext.Current.Session["timeSort"] != null)
+        {
+            timeSort = DateTime.Parse(HttpContext.Current.Session["timeSort"].ToString());
+        }
+
+
+        
+        //Response.Write("<script language='javascript'>alert('" +userNameSort + " " + timeSort.ToString() + "')</script>");
+        if (timeSort < DateTime.Now)
+        {
+            posts = PostDB.GetPosts(topicID, 10, PostDB.PostSorts.ByDate, userNameSort, timeSort, true);
+        }
+        else
+        {
+            posts = PostDB.GetPosts(topicID, DateTime.Now.AddDays(2));
+        }
+        int counter = 0;
+        for (int i = 0; i < posts.Count(); i++){
             TableRow topRow = new TableRow();
             if (counter++ % 2 == 1)
             {
@@ -59,7 +73,7 @@ public partial class Topics : System.Web.UI.Page
             //titleCell.ColumnSpan = 2;
             
             HyperLink hlTitle = new HyperLink();
-            hlTitle.Text = title;
+            hlTitle.Text = posts[i].Title;
             hlTitle.NavigateUrl = "~/nofile";
             titleCell.Controls.Add(hlTitle);
             topRow.Cells.Add(titleCell);
@@ -68,6 +82,7 @@ public partial class Topics : System.Web.UI.Page
             //descCell.RowSpan = 30;
             descCell.ColumnSpan = 2;
             descCell.Wrap = true;
+            string content = posts[i].Content;
             if (content.Length > 150)
             {
                 content = content.Substring(0, 150) + "...";
@@ -77,22 +92,28 @@ public partial class Topics : System.Web.UI.Page
             topRow.Cells.Add(descCell);
 
             TableCell nameCell = new TableCell();
-            nameCell.Text = reader["UserName"].ToString();
+            nameCell.Text = ForumUserDB.GetUser(posts[i].UserID).UserName;
             nameCell.CssClass = "nameCell";
             topRow.Cells.Add(nameCell);
 
             TableCell dateCell = new TableCell();
-            dateCell.Text = timePosted.ToString();
+            dateCell.Text = posts[i].TimePosted.ToString();
             topRow.Cells.Add(dateCell);
             dateCell.CssClass = "dateCell";
             tblPosts.Rows.Add(topRow);        
             
         }
            
-        connection.Close();
     }
     protected void btnPost_Click(object sender, EventArgs e)
     {
         Response.Redirect("~/CreatePost.aspx?topicID=" + Request.QueryString["id"]);
+    }
+
+
+    protected void btnNextPostPage_Click(object sender, EventArgs e)
+    {
+        Session["timeSort"] = posts[posts.Count() - 1];
+        Response.Redirect(Request.RawUrl);
     }
 }

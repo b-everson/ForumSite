@@ -7,10 +7,12 @@
                 <asp:TableRow runat="server">
                     <asp:TableHeaderCell runat="server" CssClass="titleCell">Post Title</asp:TableHeaderCell>
                     <asp:TableHeaderCell runat="server" ColumnSpan="2" CssClass="descCell">Post Text</asp:TableHeaderCell>
-                    <asp:TableHeaderCell runat="server" CssClass="nameCell">User</asp:TableHeaderCell>
-                    <asp:TableHeaderCell runat="server" CssClass="dateCell">Date</asp:TableHeaderCell>
+                    <asp:TableHeaderCell runat="server" CssClass="nameCell"><asp:button ID="btnUserSort" runat="server" Text="User"></asp:button></asp:TableHeaderCell>
+                    <asp:TableHeaderCell runat="server" CssClass="dateCell"><asp:Button ID="btnTimeSort" runat="server" Text="Time Posted"></asp:Button></asp:TableHeaderCell>
                 </asp:TableRow>
             </asp:Table>
+            <br />
+            <asp:Button ID="btnNextPostPage" runat="server" OnClick="btnNextPostPage_Click" Text="Next" />
         </asp:Panel>
     </div>
     </asp:Content>
