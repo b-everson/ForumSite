@@ -33,14 +33,15 @@ public class PostDB
     /// <param name="time"></param>
     /// <param name="ascending"></param>
     /// <returns></returns>
-    public static PostList GetPosts(int topicID, int number, PostSorts sort, string userName, DateTime time, bool ascending)
+    public static PostList GetPosts(int topicID, int number, PostSorts sort, int postIDSort, string userName, DateTime time, bool ascending)
     {   //take the topicID, number, and sort to determine query options
         PostList posts = new PostList();
 
         string numberOfRows = "";
         string orderBy = "";
         string ascendingOrder = "";
-        string whereClause = "";
+        string whereClauseMatching = "";
+        string whereClauseElse = "";
         string relation = "";
         string union = "";
 
@@ -62,30 +63,25 @@ public class PostDB
 
         if (sort == PostSorts.ByDate)
         {
-            orderBy = " ORDER BY [TimePosted] " + ascendingOrder + " ";
-            if (time < DateTime.Now.AddDays(1))
-            {
-                whereClause = " AND [TimePosted] " + relation + " @timePosted";
-            }
+            orderBy = " ORDER BY [TimePosted] " + ascendingOrder + ", [UserName], [PostID] ";  //DateAdd(MILLISECOND, 999 ,@time))
+            whereClauseMatching = " AND UserName = @userName AND ([TimePosted] " + relation + " DateAdd(MILLISECOND, 999, @timePosted) OR [TimePosted] = @timePosted AND PostID > @postID)";
+            whereClauseElse = " AND [TimePosted] " + relation + " @timePosted AND Username != @userName OR [TimePosted] = @timePosted AND UserName > @userName";
         }
         else if (sort == PostSorts.ByUserName)
         {
-            orderBy = " ORDER BY [UserName]" + ascendingOrder + ", [TimePosted] ";
-            if (userName != "")
-            {
-                whereClause = " AND [UserName] " + relation + " @userName";
-                union = "SELECT p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID AND [UserName] = @userName AND [TimePosted] " + relation + " @timePosted " + orderBy + " UNION ";
-            }
-
+            orderBy = " ORDER BY [UserName]" + ascendingOrder + ", [TimePosted], [PostID] ";
+            whereClauseMatching = " And UserName = @userName AND ([TimePosted] = @timePosted AND PostID > @postID OR [TimePosted] > @timePosted) ";
+            whereClauseElse = " AND UserName " + relation + " @userName ";
         }
 
-
-        
+        union = "SELECT p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID " + whereClauseMatching + " UNION ";
+         
         SqlConnection connection = ForumDB.GetConnection();
-        SqlCommand postsCommand = new SqlCommand(union + "SELECT " + numberOfRows + "p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID" + whereClause + orderBy, connection);
+        SqlCommand postsCommand = new SqlCommand("SELECT " + numberOfRows + " [PostID], [Title], [Content], [TimePosted], [UserID], [TopicID], [UserName]  FROM (" + union + "SELECT " + numberOfRows + " p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID" + whereClauseElse + orderBy + ") as rows" + " WHERE [TopicID] = @topicID"  + orderBy, connection);
         postsCommand.Parameters.AddWithValue("@topicID", topicID);
         postsCommand.Parameters.AddWithValue("@userName", userName);
         postsCommand.Parameters.AddWithValue("@timePosted", time);
+        postsCommand.Parameters.AddWithValue("@postID", postIDSort);
         string derp = postsCommand.CommandText;
 
 
@@ -103,6 +99,8 @@ public class PostDB
             posts.Add(post);
         }
 
+        connection.Close();
+
         return posts;
     }
 
@@ -114,7 +112,7 @@ public class PostDB
     /// <returns></returns>
     public static PostList GetPosts(int topicID, DateTime time)
     {
-        return GetPosts(topicID, 10, PostSorts.ByDate, "", time, true);
+        return GetPosts(topicID, 10, PostSorts.ByUserName, -1 , "", time, true);
     }
 
 
@@ -182,6 +180,8 @@ public class PostDB
             userId = Convert.ToInt32(reader["UserID"]);
             topicID = Convert.ToInt32(reader["TopicID"]);
         }
+
+        connection.Close();
 
         post = new Post(postID, title, content, timePosted, userId, topicID);
 
