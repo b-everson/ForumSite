@@ -8,13 +8,19 @@ using System.Data.SqlClient;
 
 public partial class Topics : System.Web.UI.Page
 {
+    
     PostList posts;
 
     protected void Page_Load(object sender, EventArgs e)
     {
         loadPosts();
-        Session.Remove("timeSort");
-        Session.Remove("userNameSort");
+     /*   if (IsPostBack)
+        {
+            Response.Write("<script language='javascript'>alert('Not PostBack');setTimeout('function(){alert(\"balls\")}', 5000)</script>");
+            Session.Remove("userNameSort");
+            Session.Remove("postIDSort");
+            Session.Remove("timeSort");
+        }*/
     }
 
     /* 
@@ -33,28 +39,35 @@ public partial class Topics : System.Web.UI.Page
 
         int topicID = Convert.ToInt32(Request.QueryString["id"]);
         string userNameSort = "";
-        if (HttpContext.Current.Session["userNameSort"] != null)
+        if ( Request.QueryString["userNameSort"] != null && Request.QueryString["userNameSort"].ToString().Length > 0)
         {
-            userNameSort = HttpContext.Current.Session["userNameSort"].ToString();
+            userNameSort = Request.QueryString["userNameSort"].ToString().Replace("+", " ");
         }
 
-        DateTime timeSort = DateTime.Now.AddDays(2);
-        if (HttpContext.Current.Session["timeSort"] != null)
+        int postIDSort = -1;
+        if (Request.QueryString["postIDSort"] != null && Request.QueryString["postIDSort"].ToString().Length > 0)
         {
-            timeSort = DateTime.Parse(HttpContext.Current.Session["timeSort"].ToString());
+            postIDSort = Convert.ToInt32(Request.QueryString["postIDSort"]);
+        }
+
+        DateTime timeSort = new DateTime(1900,1,1);
+        if (Request.QueryString["timeSort"] != null)// && Request.QueryString["timeSort"].ToString().Length > 0)
+        {
+            try
+            {
+                timeSort = DateTime.Parse(Request.QueryString["timeSort"].ToString().Replace("+", " "));
+            }
+            catch (Exception) {  }
         }
 
 
         
-        //Response.Write("<script language='javascript'>alert('" +userNameSort + " " + timeSort.ToString() + "')</script>");
-        if (timeSort < DateTime.Now)
-        {
-            posts = PostDB.GetPosts(topicID, 10, PostDB.PostSorts.ByDate, userNameSort, timeSort, true);
-        }
-        else
-        {
-            posts = PostDB.GetPosts(topicID, DateTime.Now.AddDays(2));
-        }
+    //    Response.Write("<script language='javascript'>alert('" +userNameSort + " " + timeSort.ToString() + " " +  postIDSort + "')</script>");
+        posts = null;
+        posts = PostDB.GetPosts(topicID, 10, PostDB.PostSorts.ByDate, postIDSort, userNameSort, timeSort, true);
+      
+
+    //    Response.Write("<script language='javascript'>alert('" + ForumUserDB.GetUser(posts[posts.Count() - 1].UserID).UserName.ToString() + " " + posts[posts.Count() - 1].TimePosted.ToString() + " " + posts[posts.Count() - 1].PostID.ToString() + "')</script>");
         int counter = 0;
         for (int i = 0; i < posts.Count(); i++){
             TableRow topRow = new TableRow();
@@ -92,7 +105,7 @@ public partial class Topics : System.Web.UI.Page
             topRow.Cells.Add(descCell);
 
             TableCell nameCell = new TableCell();
-            nameCell.Text = ForumUserDB.GetUser(posts[i].UserID).UserName;
+            nameCell.Text = ForumUserDB.GetUser(posts[i].UserID).UserName + " " + posts[i].PostID.ToString();
             nameCell.CssClass = "nameCell";
             topRow.Cells.Add(nameCell);
 
@@ -100,8 +113,8 @@ public partial class Topics : System.Web.UI.Page
             dateCell.Text = posts[i].TimePosted.ToString();
             topRow.Cells.Add(dateCell);
             dateCell.CssClass = "dateCell";
-            tblPosts.Rows.Add(topRow);        
-            
+            tblPosts.Rows.Add(topRow);
+
         }
            
     }
@@ -113,7 +126,17 @@ public partial class Topics : System.Web.UI.Page
 
     protected void btnNextPostPage_Click(object sender, EventArgs e)
     {
-        Session["timeSort"] = posts[posts.Count() - 1];
-        Response.Redirect(Request.RawUrl);
+        string timeSort = "";
+        string postIDSort = "";
+        string userNameSort = "";
+        if(posts.Count() > 0)
+        {
+            timeSort = posts[posts.Count() - 1].TimePosted.ToString().Replace(" ", "+");
+            postIDSort = posts[posts.Count() - 1].PostID.ToString().Replace(" ", "+");      
+            userNameSort = ForumUserDB.GetUser(posts[posts.Count() - 1].UserID).UserName.Replace(" ", "+");
+        }
+       // Response.Write("<script language='javascript'>alert('" + HttpContext.Current.Session["userNameSort"] + " " + HttpContext.Current.Session["postIDSort"] + "');setTimeout(function(){document.location = '" + ResolveUrl("~/Posts.aspx?id=") + Request.QueryString["id"] + "'}, 5000)</script>");
+        Response.Redirect("~/Posts.aspx?id=" + Request.QueryString["id"] + "&timeSort=" + timeSort + "&postIDSort=" + postIDSort + "&userNameSort=" + userNameSort);
+        
     }
 }

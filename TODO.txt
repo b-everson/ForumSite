@@ -3,13 +3,16 @@ Features needing to be implemented -
     -Admin creating or deleting? (maybe archive?) topics
     -Admin deleting posts    
 
-    -Users creating posts
+    -Users creating posts                              DONE 
     -Users private message other users
     -Users check reply messages 
     -Users check posts
-    -User name should be displayed with posts
+    -User name should be displayed with posts          DONE
 
 
 Get database logic out of pages
+
+Fix code for paging --BETTER, Session isn't a good way to handle paging, using 
+    query strings now, but need to fix implementation, last page in particular
 
     
