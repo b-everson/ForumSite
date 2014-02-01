@@ -15,4 +15,6 @@ Get database logic out of pages
 Fix code for paging --BETTER, Session isn't a good way to handle paging, using 
     query strings now, but need to fix implementation, last page in particular
 
-    
+Remove hidden password and username inputs on master page, was used with 
+SqlDataSource on page before the user panel is generated in code behind, now I 
+will do the database read in the code file instead of using the SqlDataSource

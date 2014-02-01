@@ -14,6 +14,19 @@ public partial class Topics : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         loadPosts();
+        string timeSort = "";
+        string postIDSort = "";
+        string userNameSort = "";
+        if(posts.Count() > 0)
+        {
+            timeSort = posts[posts.Count() - 1].TimePosted.ToString().Replace(" ", "+");
+            postIDSort = posts[posts.Count() - 1].PostID.ToString().Replace(" ", "+");      
+            userNameSort = ForumUserDB.GetUser(posts[posts.Count() - 1].UserID).UserName.Replace(" ", "+");
+        }
+       // Response.Write("<script language='javascript'>alert('" + HttpContext.Current.Session["userNameSort"] + " " + HttpContext.Current.Session["postIDSort"] + "');setTimeout(function(){document.location = '" + ResolveUrl("~/Posts.aspx?id=") + Request.QueryString["id"] + "'}, 5000)</script>");
+        if (timeSort.Length > 0)
+        btnNextPostPage.PostBackUrl = "~/Posts.aspx?id=" + Request.QueryString["id"] + "&timeSort=" + timeSort + "&postIDSort=" + postIDSort + "&userNameSort=" + userNameSort;
+        
      /*   if (IsPostBack)
         {
             Response.Write("<script language='javascript'>alert('Not PostBack');setTimeout('function(){alert(\"balls\")}', 5000)</script>");
@@ -126,17 +139,6 @@ public partial class Topics : System.Web.UI.Page
 
     protected void btnNextPostPage_Click(object sender, EventArgs e)
     {
-        string timeSort = "";
-        string postIDSort = "";
-        string userNameSort = "";
-        if(posts.Count() > 0)
-        {
-            timeSort = posts[posts.Count() - 1].TimePosted.ToString().Replace(" ", "+");
-            postIDSort = posts[posts.Count() - 1].PostID.ToString().Replace(" ", "+");      
-            userNameSort = ForumUserDB.GetUser(posts[posts.Count() - 1].UserID).UserName.Replace(" ", "+");
-        }
-       // Response.Write("<script language='javascript'>alert('" + HttpContext.Current.Session["userNameSort"] + " " + HttpContext.Current.Session["postIDSort"] + "');setTimeout(function(){document.location = '" + ResolveUrl("~/Posts.aspx?id=") + Request.QueryString["id"] + "'}, 5000)</script>");
-        Response.Redirect("~/Posts.aspx?id=" + Request.QueryString["id"] + "&timeSort=" + timeSort + "&postIDSort=" + postIDSort + "&userNameSort=" + userNameSort);
-        
+        Response.Write("<script language='javascript'>alert('bacon');</script>");
     }
 }
