@@ -8,15 +8,21 @@ using System.Data.SqlClient;
 
 public partial class Topics : System.Web.UI.Page
 {
-    
+    PostDB.PostSorts sortMethod = PostDB.PostSorts.ByDate;
     PostList posts;
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        loadPosts();
+        if ( Request.QueryString["sortMethod"] != null && Request.QueryString["sortMethod"].Length > 0)
+        {
+            sortMethod = (PostDB.PostSorts)Convert.ToInt32(Request.QueryString["sortMethod"]);
+        }
+        loadPosts(sortMethod);
         string timeSort = "";
         string postIDSort = "";
         string userNameSort = "";
+
+
         if(posts.Count() > 0)
         {
             timeSort = posts[posts.Count() - 1].TimePosted.ToString().Replace(" ", "+");
@@ -25,7 +31,9 @@ public partial class Topics : System.Web.UI.Page
         }
        // Response.Write("<script language='javascript'>alert('" + HttpContext.Current.Session["userNameSort"] + " " + HttpContext.Current.Session["postIDSort"] + "');setTimeout(function(){document.location = '" + ResolveUrl("~/Posts.aspx?id=") + Request.QueryString["id"] + "'}, 5000)</script>");
         if (timeSort.Length > 0)
-        btnNextPostPage.PostBackUrl = "~/Posts.aspx?id=" + Request.QueryString["id"] + "&timeSort=" + timeSort + "&postIDSort=" + postIDSort + "&userNameSort=" + userNameSort;
+        btnNextPostPage.PostBackUrl = "~/Posts.aspx?id=" + Request.QueryString["id"] + "&timeSort=" + timeSort + "&postIDSort=" + postIDSort + "&userNameSort=" + userNameSort + "&sortMethod=" + (int)sortMethod;
+        btnTimeSort.PostBackUrl = "~/Posts.aspx?id=" + Request.QueryString["id"] + "&sortMethod=" + (int)PostDB.PostSorts.ByDate;
+        btnUserSort.PostBackUrl = "~/Posts.aspx?id=" + Request.QueryString["id"] + "&sortMethod=" + (int)PostDB.PostSorts.ByUserName;
         
      /*   if (IsPostBack)
         {
@@ -47,7 +55,7 @@ public partial class Topics : System.Web.UI.Page
     /// <summary>
     /// Populate the posts panel.
     /// </summary>
-    private void loadPosts()
+    private void loadPosts(PostDB.PostSorts method)
     {
 
         int topicID = Convert.ToInt32(Request.QueryString["id"]);
@@ -77,7 +85,7 @@ public partial class Topics : System.Web.UI.Page
         
     //    Response.Write("<script language='javascript'>alert('" +userNameSort + " " + timeSort.ToString() + " " +  postIDSort + "')</script>");
         posts = null;
-        posts = PostDB.GetPosts(topicID, 10, PostDB.PostSorts.ByDate, postIDSort, userNameSort, timeSort, true);
+        posts = PostDB.GetPosts(topicID, 10, method, postIDSort, userNameSort, timeSort, true);
       
 
     //    Response.Write("<script language='javascript'>alert('" + ForumUserDB.GetUser(posts[posts.Count() - 1].UserID).UserName.ToString() + " " + posts[posts.Count() - 1].TimePosted.ToString() + " " + posts[posts.Count() - 1].PostID.ToString() + "')</script>");
@@ -139,6 +147,7 @@ public partial class Topics : System.Web.UI.Page
 
     protected void btnNextPostPage_Click(object sender, EventArgs e)
     {
-        Response.Write("<script language='javascript'>alert('bacon');</script>");
+        if(posts.Count() < 10 )  //need to implement function to determine if last post in list is also the last post of sort method
+        btnNextPostPage.PostBackUrl = Request.RawUrl;
     }
 }
