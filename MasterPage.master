@@ -11,7 +11,14 @@
 </head>
 <body>
     <form id="form1" runat="server">
+        <asp:Menu ID="navMenu" runat="server" Orientation="Horizontal">
+            <Items>
+                <asp:MenuItem NavigateUrl="~/Default.aspx" Text="Home" Value="Home"></asp:MenuItem>
+                <asp:MenuItem NavigateUrl="Forums.aspx" Text="Forums" Value="Forums"></asp:MenuItem>
+            </Items>
+        </asp:Menu>
     <asp:Panel ID ="pnlUser" runat ="server">
+
     </asp:Panel>
         <asp:SqlDataSource ID="sdsUser" runat="server" CancelSelectOnNullParameter="False" ConnectionString="<%$ ConnectionStrings:ForumDatabaseConnectionString %>" SelectCommand="select dbo.fnGetUser(@username, @password)">
             <SelectParameters>

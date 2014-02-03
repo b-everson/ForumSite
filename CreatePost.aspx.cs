@@ -18,7 +18,7 @@ public partial class CreatePost : System.Web.UI.Page
         }
         catch (Exception)
         {
-            Response.Write("<script language='javascript'>alert('Error loading page, rerouting to home page.'); document.location = '" + ResolveUrl("~/Default.aspx") + "'; </script>");
+            Response.Write("<script language='javascript'>alert('Error loading page, rerouting to home page.'); document.location = '" + ResolveUrl("Forums.aspx") + "'; </script>");
         }
         if (userID < 1)
         {
@@ -27,7 +27,7 @@ public partial class CreatePost : System.Web.UI.Page
         }
         if (topicID < 1)
         {
-            Response.Write("<script language='javascript'>alert('Error loading page, rerouting to home page.'); document.location = '" + ResolveUrl("~/Default.aspx") + "'; </script>");
+            Response.Write("<script language='javascript'>alert('Error loading page, rerouting to home page.'); document.location = '" + ResolveUrl("~/Forums.aspx") + "'; </script>");
         }
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
@@ -35,6 +35,6 @@ public partial class CreatePost : System.Web.UI.Page
         int topicID = Convert.ToInt32(Request.QueryString["topicID"]);
         int userID = Convert.ToInt32(Session["userID"]);
         PostDB.CreatePost(txtTitle.Text, txtContent.Text, userID ,topicID);
-        Response.Redirect("~/Posts.aspx?id=" + topicID);
+        Response.Redirect("~/Topics.aspx?topicId=" + topicID);
     }
 }

@@ -16,7 +16,7 @@ public class Post : IComparable<Post>
         this.Content = content;
         this.TimePosted = timePosted;
         this.UserID = userID;
-        this.TopicID = topicID;
+        this.topicID = topicID;
     }
 
     public int PostID { get; private set; }
@@ -24,7 +24,7 @@ public class Post : IComparable<Post>
     public string Content { get; set; }
     public DateTime TimePosted { get; private set; }
     public int UserID { get; private set; }
-    public int TopicID { get; private set; }
+    public int topicID { get; private set; }
 
 
     public int CompareTo(Post other)
@@ -79,5 +79,15 @@ public class Post : IComparable<Post>
                 return ForumUserDB.GetUser(x.UserID).UserName.CompareTo(ForumUserDB.GetUser(y.UserID).UserName);
             }
         }
+    }
+
+    public static bool operator == (Post p1, Post p2)
+    {
+        return p1.PostID == p2.PostID;
+    }
+
+    public static bool operator !=(Post p1, Post p2)
+    {
+        return p1.PostID != p2.PostID;
     }
 }

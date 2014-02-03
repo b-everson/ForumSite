@@ -74,10 +74,10 @@ public class PostDB
             whereClauseElse = " AND UserName " + relation + " @userName ";
         }
 
-        union = "SELECT p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID " + whereClauseMatching + " UNION ";
+        union = "SELECT p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[topicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [topicID] = @topicID " + whereClauseMatching + " UNION ";
          
         SqlConnection connection = ForumDB.GetConnection();
-        SqlCommand postsCommand = new SqlCommand("SELECT " + numberOfRows + " [PostID], [Title], [Content], [TimePosted], [UserID], [TopicID], [UserName]  FROM (" + union + "SELECT " + numberOfRows + " p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[TopicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [TopicID] = @topicID" + whereClauseElse + orderBy + ") as rows" + " WHERE [TopicID] = @topicID"  + orderBy, connection);
+        SqlCommand postsCommand = new SqlCommand("SELECT " + numberOfRows + " [PostID], [Title], [Content], [TimePosted], [UserID], [topicID], [UserName]  FROM (" + union + "SELECT " + numberOfRows + " p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[topicID], u.UserName FROM [Post] p JOIN [User] u ON p.UserID = u.UserID WHERE [topicID] = @topicID" + whereClauseElse + orderBy + ") as rows" + " WHERE [topicID] = @topicID"  + orderBy, connection);
         postsCommand.Parameters.AddWithValue("@topicID", topicID);
         postsCommand.Parameters.AddWithValue("@userName", userName);
         postsCommand.Parameters.AddWithValue("@timePosted", time);
@@ -129,7 +129,7 @@ public class PostDB
         Post post = null;
         
         SqlConnection connection = ForumDB.GetConnection();
-        SqlCommand createCommand = new SqlCommand("INSERT INTO [Post]([Title],[Content],[TimePosted],[UserID],[TopicID]) VALUES (@title,@content,GetDate(),@userID,@topicID); SELECT SCOPE_IDENTITY()",connection);
+        SqlCommand createCommand = new SqlCommand("INSERT INTO [Post]([Title],[Content],[TimePosted],[UserID],[topicID]) VALUES (@title,@content,GetDate(),@userID,@topicID); SELECT SCOPE_IDENTITY()",connection);
         createCommand.Parameters.AddWithValue("@title", title);
         createCommand.Parameters.AddWithValue("@content", content);
         createCommand.Parameters.AddWithValue("@userID", userID);
@@ -161,7 +161,7 @@ public class PostDB
         Post post = null;
 
         SqlConnection connection = ForumDB.GetConnection();
-        SqlCommand command = new SqlCommand("SELECT [Title],[Content],[TimePosted],[UserID],[TopicID] FROM [Post] WHERE [PostID] = @postID ", connection);
+        SqlCommand command = new SqlCommand("SELECT [Title],[Content],[TimePosted],[UserID],[topicID] FROM [Post] WHERE [PostID] = @postID ", connection);
         command.Parameters.AddWithValue("@postID", postID);
 
         connection.Open();
@@ -178,7 +178,7 @@ public class PostDB
             content = reader["Content"].ToString();
             timePosted = DateTime.Parse(reader["TimePosted"].ToString());
             userId = Convert.ToInt32(reader["UserID"]);
-            topicID = Convert.ToInt32(reader["TopicID"]);
+            topicID = Convert.ToInt32(reader["topicID"]);
         }
 
         connection.Close();
@@ -188,4 +188,64 @@ public class PostDB
         return post;
     }
 
+    /// <summary>
+    /// Return the last post of a particular topic and sort.
+    /// </summary>
+    /// <param name="topicID"></param>
+    /// <param name="sort"></param>
+    /// <param name="ascending"></param>
+    /// <returns></returns>
+    public static Post GetLastPost(int topicID, PostSorts sort, bool ascending)
+    {
+        Post post = null;
+        SqlConnection connection = ForumDB.GetConnection();
+        string orderby = "";
+        string reverseAscending = "";
+
+        if (ascending)
+        {
+            reverseAscending = "DESC";
+        }
+        else
+        {
+            reverseAscending = "ASC";
+        }
+
+        if (sort == PostSorts.ByDate)
+        {
+            orderby = " ORDER BY [TimePosted] " + reverseAscending + ", [UserName] DESC, [PostID] DESC ";
+        }
+        else if(sort == PostSorts.ByUserName)
+        {
+            orderby = " ORDER BY [UserName] " + reverseAscending + ", [TimePosted] DESC, [PostID] DESC ";
+        }
+
+
+        int postID = -1;
+        string title = "";
+        string content = "";
+        DateTime timePosted = DateTime.Now.AddDays(10);
+        int userID = -1;
+        
+
+        SqlCommand selectCommand = new SqlCommand("SELECT TOP 1 p.[PostID], p.[Title], p.[Content], p.[TimePosted], p.[UserID], p.[topicID], u.UserName FROM [Post] p Join [User] u on p.UserID = u.UserID WHERE topicID = @topicID " + orderby, connection);
+        selectCommand.Parameters.AddWithValue("@topicID", topicID);
+        connection.Open();
+
+        SqlDataReader reader = selectCommand.ExecuteReader();
+        if (reader.Read())
+        {
+            postID = Convert.ToInt32(reader["PostID"]);
+            title = reader["Title"].ToString();
+            content = reader["Content"].ToString();
+            timePosted = DateTime.Parse(reader["TimePosted"].ToString());
+            userID = Convert.ToInt32(reader["UserID"]);
+        }
+
+        connection.Close();
+
+        post = new Post(postID, title, content, timePosted, userID, topicID);
+
+        return post;
+    }
 }

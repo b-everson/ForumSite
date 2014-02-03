@@ -128,3 +128,15 @@
     background-color: lightblue;
 }
 
+#mainContent {
+    clear: both;
+    margin: 10% 10% 10% 10%;
+    padding-top: 5%;
+}
+
+#navMenu {
+    float:left;
+    margin-left: 10%;
+    position: absolute;
+
+}

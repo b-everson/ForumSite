@@ -90,14 +90,14 @@ public partial class CreateAccount : System.Web.UI.Page
         {
             /*create new ForumUser with textfield values
               save clientID into session state
-              redirect to ~/default.aspx
+              redirect to ~/Forums.aspx
              */
             try
             {
                 ForumUser user = ForumUserDB.CreateUser(txtUserName.Text, txtPassword.Text, txtFirstName.Text, txtLastName.Text, txtEmail.Text, txtPhone.Text, txtStreet1.Text, txtStreet2.Text, txtCity.Text, ddlState.SelectedValue, txtZip.Text);
                 lblMessage.Text = "";
                 Session["UserID"] = user.UserID;
-                Response.Redirect("~/Default.aspx");
+                Response.Redirect("~/Forums.aspx");
             }
             catch (Exception ex)
             {

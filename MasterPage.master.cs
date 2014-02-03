@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
+using System.Drawing;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
@@ -31,9 +32,11 @@ public partial class MasterPage : System.Web.UI.MasterPage
         {
             case -2:
                 lblMessage.Text = "Incorrect password for that user.";
+                lblMessage.ForeColor = Color.Red;
                 break;
             case -1:
                 lblMessage.Text = "User not found.";
+                lblMessage.ForeColor = Color.Red;
                 break;
             case 0:
                 lblMessage.Text = "";
@@ -42,6 +45,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
 
                 break;
         }
+        
 
         if (userID <= 0)
         {
