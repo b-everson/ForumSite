@@ -88,9 +88,9 @@ public class Post : IComparable<Post>
             return true;
         }
 
-        //if one is null and the other is not null they are not equal
+        //if either p1 or p2 is null return false
 
-        if ((Object)p1 == null && (Object)p2 != null || (Object)p1 != null && (Object)p2 == null)
+        if ((Object)p1 == null || (Object)p2 == null)
         {
             return false;
         }
