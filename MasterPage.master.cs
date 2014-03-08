@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
 using System.Drawing;
+using System.Data.SqlClient;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
@@ -119,18 +120,27 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         //for user selection if user not found return val is -1, if user exits but password is incorrect returnval is -2
         //otherwise, log the user in, saving UserID in session state
-        hiddenUserName.Value = txtUserName.Text;
-        hiddenPassword.Value = txtPassword.Text;
-        DataView UserData = (DataView)sdsUser.Select(DataSourceSelectArguments.Empty);
+
+        SqlConnection connection = ForumDB.GetConnection();
+        SqlCommand command = new SqlCommand("select dbo.fnGetUser(@username, @password)", connection);
+        command.Parameters.AddWithValue("@username", txtUserName.Text);
+        command.Parameters.AddWithValue("@password", txtPassword.Text);
+        int userID = -1;
+        connection.Open();
 
 
-        DataRowView UserRow = (DataRowView)UserData[0];
+        SqlDataReader reader = command.ExecuteReader();
 
-        int userID = int.Parse(UserRow[0].ToString());
+        
+        if (reader.Read())
+        {
+            userID = Convert.ToInt32(reader[0]);
+        }
+
+        connection.Close();
+
         Session.Add("UserID", userID);
 
-        hiddenPassword.Value = "";
-        hiddenUserName.Value = "";
         Response.Redirect(Request.RawUrl);
     }
 

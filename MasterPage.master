@@ -20,14 +20,6 @@
     <asp:Panel ID ="pnlUser" runat ="server">
 
     </asp:Panel>
-        <asp:SqlDataSource ID="sdsUser" runat="server" CancelSelectOnNullParameter="False" ConnectionString="<%$ ConnectionStrings:ForumDatabaseConnectionString %>" SelectCommand="select dbo.fnGetUser(@username, @password)">
-            <SelectParameters>
-                <asp:ControlParameter ControlID="hiddenUserName" Name="username" PropertyName="Value" />
-                <asp:ControlParameter ControlID="hiddenPassword" Name="password" PropertyName="Value" />
-            </SelectParameters>
-        </asp:SqlDataSource>
-        <asp:HiddenField ID="hiddenUserName" runat="server" />
-        <asp:HiddenField ID="hiddenPassword" runat="server" />
         <div>
         <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
         

@@ -17,4 +17,4 @@ Fix code for paging --BETTER, Session isn't a good way to handle paging, using
 
 Remove hidden password and username inputs on master page, was used with 
 SqlDataSource on page before the user panel is generated in code behind, now I 
-will do the database read in the code file instead of using the SqlDataSource
+will do the database read in the code file instead of using the SqlDataSource   DONE
