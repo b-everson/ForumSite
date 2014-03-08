@@ -110,7 +110,7 @@ public partial class Topics : System.Web.UI.Page
             
             HyperLink hlTitle = new HyperLink();
             hlTitle.Text = posts[i].Title;
-            hlTitle.NavigateUrl = "~/nofile";
+            hlTitle.NavigateUrl = "~/Posts.aspx?postID=" + posts[i].PostID;
             titleCell.Controls.Add(hlTitle);
             topRow.Cells.Add(titleCell);
 

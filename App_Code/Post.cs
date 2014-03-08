@@ -83,11 +83,25 @@ public class Post : IComparable<Post>
 
     public static bool operator == (Post p1, Post p2)
     {
+        if (Object.ReferenceEquals(p1, p2))
+        {
+            return true;
+        }
+
+        //if one is null and the other is not null they are not equal
+
+        if ((Object)p1 == null && (Object)p2 != null || (Object)p1 != null && (Object)p2 == null)
+        {
+            return false;
+        }
+
+
         return p1.PostID == p2.PostID;
     }
 
     public static bool operator !=(Post p1, Post p2)
-    {
-        return p1.PostID != p2.PostID;
+    {   
+        return !(p1 == p2);
     }
+
 }

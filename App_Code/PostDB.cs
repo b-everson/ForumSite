@@ -156,7 +156,7 @@ public class PostDB
     /// </summary>
     /// <param name="postID"></param>
     /// <returns></returns>
-    private static Post GetPost(int postID)
+    public static Post GetPost(int postID)
     {
         Post post = null;
 
@@ -182,8 +182,10 @@ public class PostDB
         }
 
         connection.Close();
-
-        post = new Post(postID, title, content, timePosted, userId, topicID);
+        if (userId > -1)
+        {
+            post = new Post(postID, title, content, timePosted, userId, topicID);
+        }
 
         return post;
     }
