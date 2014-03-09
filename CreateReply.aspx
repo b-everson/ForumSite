@@ -19,9 +19,9 @@
         </asp:Panel>
     </asp:Panel>
     <div> 
-        <textarea id="taContent"></textarea>
+        <textarea id="taContent" runat="server"></textarea>
         <br />
-        <button type="submit">Submit</button>
+        <asp:Button runat="server" ID ="btnCreateReply" Text="Create Reply" OnClick="CreateClient"/>
         <button type="button">Cancel</button>
     </div>  
 </asp:Content>

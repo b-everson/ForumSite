@@ -85,4 +85,11 @@ public partial class CreateReply : System.Web.UI.Page
     {
         Response.Write("<script language='javascript'>alert('Invalid page, redirecting to main forum page.'); setTimeout(function(){ document.location = '" + ResolveUrl("~/Forums.aspx") + "'} ,100)</script>");
     }
+
+    protected void CreateClient(object sender, EventArgs e)
+    {
+        int userID = Convert.ToInt32(Session["userID"]);
+        ReplyDB.CreateReply(taContent.Value, DateTime.Now, userID, responseToID, responseToTable);
+    }
+
 }

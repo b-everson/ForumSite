@@ -141,8 +141,11 @@
 
 }
 
-.replyPanel {
-    width: 80%;
+.replyPanel .replyPanel {
+    border: 1px solid blue;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .actionPanel {

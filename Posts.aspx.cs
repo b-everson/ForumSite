@@ -26,7 +26,6 @@ public partial class Posts : System.Web.UI.Page
             ForumUser author = ForumUserDB.GetUser(post.UserID);
             lblPostAuthor.Text = author.UserName;
             lblPostTime.Text = post.TimePosted.ToString();
-            LoadReplies();
 
             Panel replyActionPanel = new Panel();
             replyActionPanel.CssClass = "actionPanel";
@@ -35,6 +34,8 @@ public partial class Posts : System.Web.UI.Page
             hlReply.NavigateUrl = "~/CreateReply.aspx?responseToID=" + post.PostID + "&responseToTable=" + Reply.ResponsesToTable.Post;
             replyActionPanel.Controls.Add(hlReply);
             pnlReplies.Controls.Add(replyActionPanel);
+
+            LoadReplies();
         }
         else
         {
@@ -78,10 +79,15 @@ public partial class Posts : System.Web.UI.Page
                 lblContent.Text = replies[i].Content;
                 lblTimePosted.Text = replies[i].TimePosted.ToString();
                 lblUser.Text = ForumUserDB.GetUser(replies[i].Sender).UserName;
+
+                pnlChild.Controls.Add(lblContent);
+                pnlChild.Controls.Add(lblTimePosted);
+                pnlChild.Controls.Add(lblUser);
+
                 AddReplyActionPanel(pnlChild, replies[i]);
 
 
-                ReplyList childReplies = ReplyDB.GetReplies(replies[i].ResponseToID, Reply.ResponsesToTable.Reply);
+                ReplyList childReplies = ReplyDB.GetReplies(replies[i].ReplyID, Reply.ResponsesToTable.Reply);
                 AddReplyListPanel(pnlChild, childReplies);
             }
         }
@@ -92,8 +98,10 @@ public partial class Posts : System.Web.UI.Page
         Panel replyActionPanel = new Panel();
         replyActionPanel.CssClass = "actionPanel";
         HyperLink hlReply = new HyperLink();
+        hlReply.Text = "Reply to comment";
         hlReply.NavigateUrl = "~/CreateReply.aspx?responseToID=" + reply.ReplyID + "&responseToTable=" + Reply.ResponsesToTable.Reply;
         replyActionPanel.Controls.Add(hlReply);
+        pnlParent.Controls.Add(replyActionPanel);
     }
 
 }
