@@ -52,6 +52,9 @@ public class PostList
         posts.RemoveAt(index);
     }
 
+    /// <summary>
+    /// Sorts posts by time posted.
+    /// </summary>
     public void Sort()
     {
         posts.Sort();

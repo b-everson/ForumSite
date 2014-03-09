@@ -140,3 +140,22 @@
     position: absolute;
 
 }
+
+.replyPanel {
+    width: 80%;
+}
+
+.actionPanel {
+    font-size: 60%;
+}
+
+#taContent {
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    height: 100px;
+}
+
+.invisible {
+    display: none;
+}
