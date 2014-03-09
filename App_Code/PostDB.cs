@@ -152,7 +152,7 @@ public class PostDB
     }
 
     /// <summary>
-    /// Get a post by its id.
+    /// Get a post by its id, returns null if invalid post ID.
     /// </summary>
     /// <param name="postID"></param>
     /// <returns></returns>
@@ -247,6 +247,23 @@ public class PostDB
         connection.Close();
 
         post = new Post(postID, title, content, timePosted, userID, topicID);
+
+        return post;
+    }
+
+    public static Post GetParentPost(Reply reply)
+    {
+        Post post = null;
+
+        if (reply.ResponseToTable == Reply.ResponsesToTable.Post)
+        {
+            post = GetPost(reply.ResponseToID);
+        }
+        else if (reply.ResponseToTable == Reply.ResponsesToTable.Reply)
+        {
+            Reply childReply = ReplyDB.GetReply(reply.ResponseToID);
+            post = GetParentPost(childReply);
+        }
 
         return post;
     }
