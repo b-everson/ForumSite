@@ -9,6 +9,7 @@ public partial class CreateReply : System.Web.UI.Page
 {
     int responseToID = -1;
     Reply.ResponsesToTable responseToTable = Reply.ResponsesToTable.Post;
+    Post originPost = null;
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -51,7 +52,7 @@ public partial class CreateReply : System.Web.UI.Page
                       
             if (replyParent != null)
             {
-                Post originPost = PostDB.GetParentPost((Reply)replyParent);
+                originPost = PostDB.GetParentPost((Reply)replyParent);
                 if (originPost != null)
                 {
                     pnlReply.CssClass = "replyPanel";
@@ -90,6 +91,24 @@ public partial class CreateReply : System.Web.UI.Page
     {
         int userID = Convert.ToInt32(Session["userID"]);
         ReplyDB.CreateReply(taContent.Value, DateTime.Now, userID, responseToID, responseToTable);
+        string url = "";
+        if (originPost != null)
+        {
+            url = "~/Posts.aspx?PostID=" + originPost.PostID;
+        }
+        else if (responseToTable == Reply.ResponsesToTable.Post)
+        {
+            url = "~/Posts.aspx?PostID=" + responseToID;
+        }
+        else if (responseToTable == Reply.ResponsesToTable.Message)
+        {
+            url = "~/NoUrl.derp";
+        }
+        else if (responseToTable == Reply.ResponsesToTable.Reply)
+        {
+            url = "~/NoUrl.derp";
+        }
+        Response.Redirect(url);
     }
 
 }
